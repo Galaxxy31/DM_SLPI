@@ -4,15 +4,35 @@ Program main
   Use mod_donnees
   Implicit None
 
-  !Initialisation
-  Allocate(Mat_A(3,3)); Allocate(Vect_b(3))
-  Vect_b(1) = 1._PR; Vect_b(2) = 2._PR; Vect_b(3) = 3._PR
-
-  Mat_A(1,1) = 0._PR; Mat_A(1,2) = 2._PR; Mat_A(1,3) = 2._PR
-  Mat_A(2,1) = 2._PR; Mat_A(2,2) = 0._PR; Mat_A(2,3) = -2._PR
-  Mat_A(3,1) = 2._PR; Mat_A(3,2) = -2._PR; Mat_A(3,3) = 0._PR
-
   !Instructions
+  !Demande du choix d'un problème
+  Print*,"!--------------------------------------------------!"
+  Print*,"Choisissez le type d'exo :"
+  Print*,"1 - Test sur Matrice 3x3 SDP (Q1)"
+  Print*,"2 - Matrice An = In + alpha * BnT Bn (Q2-Q3-Q4)"
+  Print*,"3 - Matrice S3RMT3M3 (Q5)"
+  Read*,userChoice
+  Print*,"!--------------------------------------------------!"
+  Select Case(userChoice)
+  Case(1) !Test sur Matrice 3x3
+      Print*,"Initialisation Matrice"
+      sys = "Test"
+      Call Init_Test(Mat_A,Vect_b)
+      Print*,"Fin de l'initialisation"
+    Case(2) !Matrice An = In + alpha BnT Bn
+      Print*,"Initialisation Matrice"
+      sys = "An"
+      Call Init_An(Mat_A,Vect_b)
+      Print*,"Fin de l'initialisation"
+    Case(3) !Matrice S3RMT3M3
+      Print*,"Initialisation Matrice"
+      sys = "S3RMT3M3"
+      !Call Init_S3RMT3M3(Mat_A,Vect_b)
+      Print*,"Fin de l'initialisation"
+    Case Default
+      Print*,"Ce choix n'est pas disponible, veuillez recommencer."
+      Stop
+  End Select
 
   !Demande de choix d'une méthode de résolution
   Print*,"!--------------------------------------------------!"
@@ -28,28 +48,34 @@ Program main
   Select Case(userChoice)
   Case(1) !Gradient à Pas Optimal
       Print*,"Début du calcul"
+      meth = "GPO"
       Vect_X = GPO(Mat_A,Vect_b)
       Print*,"Fin du calcul"
     Case(2) !Gradient Conjugué
       Print*,"Début du calcul"
+      meth = "GC"
       Vect_X = GC(Mat_A,Vect_b)
       Print*,"Fin du calcul"
     Case(3) !Résidu Minimum
       Print*,"Début du calcul"
+      meth = "RM"
       Vect_X = ResMin(Mat_A,Vect_b)
       Print*,"Fin du calcul"
     Case(4) !FOM
       Print*,"Début du calcul"
+      meth = "FOM"
       Vect_X = FOM(Mat_A,Vect_b)
       Print*,"Fin du calcul"
     Case(5) !GMRes
       Print*,"Début du calcul"
+      meth = "GMRes"
       Vect_X = GMRes(Mat_A,Vect_b)
       Print*,"Fin du calcul"
     Case Default
       Print*,"Ce choix n'est pas disponible, veuillez recommencer."
       Stop
   End Select
+  Print*,"!--------------------------------------------------!"
 
   !Affichage de la solution
   Print*,"La solution du système linéaire est :"

@@ -2,7 +2,9 @@ F90=gfortran
 EXE=exe
 FLAGS=-pedantic -fcheck=all -Wall
 
-1 : clear $(EXE) clean execute
+all : $(EXE) clean
+
+exec : $(EXE) clean clear execute
 
 $(EXE) : mod_donnees.o mod_algorithmes.o main.o
 	$(F90) -o $(EXE) $^
