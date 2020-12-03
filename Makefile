@@ -2,8 +2,10 @@ F90=gfortran
 EXE=exe
 FLAGS=-pedantic -fcheck=all -Wall
 
+#make + supression des fichiers *.o et *.mod
 all : $(EXE) clean
 
+#make + supression des fichiers *.o et *.mod + nettoyage terminal + execution
 exec : $(EXE) clean clear execute
 
 $(EXE) : mod_donnees.o mod_algorithmes.o main.o
@@ -16,7 +18,7 @@ main.o : main.f90
 	$(F90) -c $(FLAGS) $^
 
 clean :
-	rm -f *.o *.mod
+	rm -f *.o *.mod *.f90~
 
 clear :
 	clear

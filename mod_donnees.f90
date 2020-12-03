@@ -5,8 +5,8 @@ Module mod_donnees
   !Déclaration des variables globales
   Integer, Parameter::PR = 8
   Real(PR), Parameter::pi = 4._PR*Atan(1._PR)
-  Real(PR), Parameter::eps = 10._PR**(-14)
-  Integer, Parameter::kmax = 1000
+  Real(PR), Parameter::eps = 10._PR**(-15)
+  Integer, Parameter::kmax = 1000000
 
   !Définition du système
   Real(PR),Dimension(:,:),Allocatable::Mat_A
@@ -16,12 +16,17 @@ Module mod_donnees
   Integer::userChoice
 
   !Taille de la matrice An pour la Q2-Q3-Q4
-  Integer,Parameter::taille_n = 6
+  Integer,Parameter::taille_n = 200
 
   !Taille de l'espace de Krylov
-  Integer,Parameter::taille_K = 2
+  Integer,Parameter::taille_K = 200
 
+  !Variables de nom de fichier
   Character(len=30)::sys, meth
+
+  !Variable d'affichage pour afficher le résidu sur la console
+  Logical,Parameter::Aff = .True.
+
 
   !Variables définies si besoin pour test
 

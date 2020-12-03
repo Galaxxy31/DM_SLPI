@@ -13,21 +13,25 @@ Module mod_algorithmes
 
       Real(PR),Dimension(:),Allocatable::Diff
       Integer:: i
-
+      
       !Instructions
       Allocate(Diff(Size(b)))
       Diff = Matmul(A,X)-b
       Do i = 1,Size(b)
-        If (abs(Diff(i)) > (10._PR**(-10))) Then !Vérification avec une tolérance de 10**-4
+        If (abs(Diff(i)) > (10._PR**(-5))) Then !Vérification avec une tolérance de 10**-5
           Print*,"Le résultat du système est incorrect"
           Print*,"AX = ",Matmul(Mat_A,Vect_X)
+          Print*,""
           Print*,"b = ",Vect_b
           Stop
         End If
       End Do
       Print*,"AX = ",Matmul(Mat_A,Vect_X)
+      Print*,""
       Print*,"b = ",Vect_b
       Print*,"Le résultat du système est correct"
+
+      Deallocate(Diff)
     End Subroutine Validation
 
     !Algorithme affichage Matrice
@@ -61,16 +65,17 @@ Module mod_algorithmes
 
     !Algorithme lecture fichier entrée
     Subroutine Lecture()
-
+      !TODO
     End Subroutine Lecture
 
     !Algorithme écriture fichier sortie
     Subroutine Ecriture()
-
+      !TODO
     End Subroutine Ecriture
 
     !----------------------------------------------------------------------!
 
+    !Initialisation pour test sur Matrice 3x3 SDP
     Subroutine Init_Test(A,b)
       !Déclaration des variables locales
       Real(PR),Dimension(:,:),Allocatable,Intent(InOut)::A
@@ -86,6 +91,7 @@ Module mod_algorithmes
 
     End Subroutine Init_Test
 
+    !Initialisation pour Matrice An = In + alpha * BnT Bn
     Subroutine Init_An(A,b)
       !Déclaration des variables locales
       Real(PR),Dimension(:,:),Allocatable,Intent(InOut)::A
@@ -128,6 +134,10 @@ Module mod_algorithmes
 
     End Subroutine Init_An
 
+    !Initialisation pour Matrice S3RMT3M3
+    Subroutine Init_S3RMT3M3()
+      !TODO
+    End Subroutine Init_S3RMT3M3
 
     !----------------------------------------------------------------------!
 
@@ -149,8 +159,9 @@ Module mod_algorithmes
       rk = b - Matmul(A,xk) !Erreur initiale
       beta = sqrt(Dot_Product(rk,rk))
       k = 0 !Initialisation du garde-fou
-      Print*,"Le résidu à l'itération ",k," vaut : ",beta
-
+      If (Aff .eqv. .True.) Then
+        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      End If
       Allocate(list(kmax))
       list(1) = beta
 
@@ -162,7 +173,9 @@ Module mod_algorithmes
         rk = rk - alpha * zk
         beta = sqrt(Dot_Product(rk,rk))
         k = k + 1
-        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        If (Aff .eqv. .True.) Then
+          Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        End If
         list(k) = beta
       End Do
 
@@ -179,6 +192,8 @@ Module mod_algorithmes
         Print*,"!--------------------------------------------------!"
         Stop
       End If
+
+      Deallocate(xk); Deallocate(rk); Deallocate(zk); Deallocate(list)
 
     End Function GPO
 
@@ -201,7 +216,9 @@ Module mod_algorithmes
       p = -rk
       beta = sqrt(Dot_Product(rk,rk))
       k = 0 !Initialisation du garde-fou
-      Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      If (Aff .eqv. .True.) Then
+        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      End If
 
       Allocate(list(kmax))
       list(1) = beta
@@ -217,7 +234,9 @@ Module mod_algorithmes
         rk = rk1
         beta = sqrt(Dot_Product(rk,rk))
         k = k + 1
-        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        If (Aff .eqv. .True.) Then
+          Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        End If
         list(k) = beta
       End Do
 
@@ -234,6 +253,8 @@ Module mod_algorithmes
         Print*,"!--------------------------------------------------!"
         Stop
       End If
+
+      Deallocate(xk); Deallocate(rk); Deallocate(p); Deallocate(list)
 
     End Function GC
 
@@ -255,7 +276,9 @@ Module mod_algorithmes
       rk = b - Matmul(A,xk) !Erreur initiale
       k = 0 !Initialisation du garde-fou
       beta = sqrt(Dot_Product(rk,rk))
-      Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      If (Aff .eqv. .True.) Then
+        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      End If
       Allocate(list(kmax))
       list(1) = beta
 
@@ -267,7 +290,9 @@ Module mod_algorithmes
         rk = rk - alpha * zk
         k = k + 1
         beta = sqrt(Dot_Product(rk,rk))
-        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        If (Aff .eqv. .True.) Then
+          Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        End If
         list(k) = beta
       End Do
 
@@ -284,6 +309,9 @@ Module mod_algorithmes
         Print*,"!--------------------------------------------------!"
         Stop
       End If
+
+      Deallocate(xk); Deallocate(rk); Deallocate(zk); Deallocate(list)
+
     End Function ResMin
 
     !Algorithme de décomposition d'un matrice A en Matrice Q orthogonale et R triangulaire supèrieure
@@ -327,6 +355,8 @@ Module mod_algorithmes
           End If
         End Do
       End Do
+
+      Deallocate(G); Deallocate(x)
 
     End Subroutine Decomp_QR
 
@@ -386,6 +416,8 @@ Module mod_algorithmes
         V(:,j+1) = (1 / H(j+1,j)) * wj
       End Do
 
+      Deallocate(wj)
+
     End Subroutine Arnoldi
 
     !Algorithme de résolution FOM
@@ -407,8 +439,11 @@ Module mod_algorithmes
       rk = b - Matmul(A,xk) !Erreur initiale
       beta = sqrt(Dot_Product(rk,rk))
       m = taille_K
+      Print*,"La taille de l'espace de Krylov est : ",m
       k = 0
-      Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      If (Aff .eqv. .True.) Then
+        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      End If
       Allocate(list(kmax))
       list(1) = beta
 
@@ -422,8 +457,11 @@ Module mod_algorithmes
         rk = -Hm(m+1,m) * yk(m) * Vm(:,m+1)
         beta = sqrt(Dot_Product(rk,rk))
         k = k+1
-        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        If (Aff .eqv. .True.) Then
+          Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        End If
         list(k) = beta
+        Deallocate(Hm); Deallocate(Vm); Deallocate(Qm); Deallocate(QmT); Deallocate(Rm); Deallocate(yk)
       End Do
 
       !Sortie
@@ -439,6 +477,8 @@ Module mod_algorithmes
         Print*,"!--------------------------------------------------!"
         Stop
       End If
+
+      Deallocate(xk); Deallocate(rk); Deallocate(list)
 
     End Function FOM
 
@@ -461,8 +501,11 @@ Module mod_algorithmes
       rk = b - Matmul(A,xk) !Erreur initiale
       beta = sqrt(Dot_Product(rk,rk))
       m = taille_K
+      Print*,"La taille de l'espace de Krylov est : ",m
       k = 0
-      Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      If (Aff .eqv. .True.) Then
+        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+      End If
       Allocate(list(kmax))
       list(1) = beta
 
@@ -474,11 +517,14 @@ Module mod_algorithmes
         gm = beta * QmT(:,1)
         yk = ResolvQR(Rm(1:m,:),gm(1:m))
         xk = xk + Matmul(Vm(:,1:m),yk)
-        rk = gm(m+1) * Matmul(Vm,QmT(:,m+1))
+        rk = gm(m+1) * Matmul(Vm,Qm(:,m+1))
         beta = abs(gm(m+1))
         k = k + 1
-        Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        If (Aff .eqv. .True.) Then
+          Print*,"Le résidu à l'itération ",k," vaut : ",beta
+        End If
         list(k) = beta
+        Deallocate(Hm); Deallocate(Vm); Deallocate(Qm); Deallocate(QmT); Deallocate(Rm); Deallocate(yk); Deallocate(gm)
       End Do
 
       !Sortie
@@ -494,6 +540,8 @@ Module mod_algorithmes
         Print*,"!--------------------------------------------------!"
         Stop
       End If
+
+      Deallocate(xk); Deallocate(rk); Deallocate(list)
 
     End Function GMRes
 
