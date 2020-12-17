@@ -27,7 +27,9 @@ Program main
     Case(3) !Matrice S3RMT3M3
       Print*,"Initialisation Matrice"
       sys = "S3RMT3M3"
-      !Call Init_S3RMT3M3(Mat_A,Vect_b)
+      Print*, "Stationnaire = 0, Instationnaire = 1 :"
+      Read*,userChoice
+      Call Init_S3RMT3M3(Mat_A,Vect_b,userChoice)
       Print*,"Fin de l'initialisation"
     Case Default
       Print*,"Ce choix n'est pas disponible, veuillez recommencer."
@@ -64,7 +66,8 @@ Program main
     Case(4) !FOM
       Print*,"Début du calcul"
       meth = "FOM"
-      Vect_X = FOM(Mat_A,Vect_b)
+      Vect_X = FOM(Mat_A,Vect_b)        !FOM initiale
+      !Vect_X = FOM_bis(Mat_A,Vect_b)   !FOM si A est SDP
       Print*,"Fin du calcul"
     Case(5) !GMRes
       Print*,"Début du calcul"
@@ -83,12 +86,9 @@ Program main
   Print*,"!--------------------------------------------------!"
 
   !Vérification de la solution
-  Print*,"Vérification de la solution :"
-  Call Validation(Mat_A,Vect_X,Vect_b)
-  Print*,"!--------------------------------------------------!"
+  !Call Validation(Mat_A,Vect_X,Vect_b)
 
   Print*,"Fin du programme"
-  Print*,"Bonne journée !"
   Print*,"!--------------------------------------------------!"
 
 End Program main
